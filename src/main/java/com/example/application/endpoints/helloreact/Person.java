@@ -1,11 +1,10 @@
 package com.example.application.endpoints.helloreact;
 
-import jakarta.annotation.Generated;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 
-import java.time.LocalDate;
+import com.vaadin.exampledata.DataType;
 
 @Entity
 public class Person {
@@ -15,24 +14,12 @@ public class Person {
     private Long id;
 
     private String firstName, lastName;
-    private LocalDate dateOfBirth;
-
-    public Long getId() {
-        return id;
-    }
-
-    public LocalDate getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    public void setDateOfBirth(LocalDate dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
 
     public String getFirstName() {
         return firstName;
     }
 
+    @ExampleData(Type.FIRST_NAME)
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
@@ -41,8 +28,8 @@ public class Person {
         return lastName;
     }
 
+    @ExampleData(Type.LAST_NAME)
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
-
 }

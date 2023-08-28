@@ -3,7 +3,7 @@ import MainLayout from 'Frontend/views/MainLayout.js';
 import { lazy } from 'react';
 import { createBrowserRouter, IndexRouteObject, NonIndexRouteObject, useMatches } from 'react-router-dom';
 
-const AboutView = lazy(async () => import('Frontend/views/about/AboutView.js'));
+const PersonView = lazy(async () => import('Frontend/views/about/PersonView.js'));
 export type MenuProps = Readonly<{
   icon?: string;
   title?: string;
@@ -34,7 +34,7 @@ export const routes: readonly ViewRouteObject[] = [
     handle: { icon: 'null', title: 'Main' },
     children: [
       { path: '/', element: <HelloReactView />, handle: { icon: 'globe-solid', title: 'Hello React' } },
-      { path: '/about', element: <AboutView />, handle: { icon: 'file', title: 'About' } },
+      { path: '/about', element: <PersonView />, handle: { icon: 'file', title: 'About' } },
     ],
   },
 ];

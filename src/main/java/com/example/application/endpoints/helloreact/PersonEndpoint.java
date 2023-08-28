@@ -1,14 +1,13 @@
 package com.example.application.endpoints.helloreact;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import dev.hilla.Endpoint;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.vaadin.exampledata.DataType;
 import com.vaadin.exampledata.ExampleDataGenerator;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 
@@ -23,9 +22,21 @@ public class PersonEndpoint {
         if (repo.count() == 0L) {
             ExampleDataGenerator<Person> generator = new ExampleDataGenerator<>(
                     Person.class, LocalDateTime.of(2022, 1, 2, 1, 2, 3));
-            generator.setData(Person::setFirstName, DataType.FIRST_NAME);
-            generator.setData(Person::setLastName, DataType.LAST_NAME);
-            generator.setData(Person::setDateOfBirth, DataType.DATE_OF_BIRTH);
+            for (Method m : Person.class.getMethods()) {
+                ExampleData annotation = m.getAnnotation(ExampleData.class);
+                if (annotation != null) {
+                    generator.setData((instance, value) -> {
+                        try {
+                            m.invoke(instance, value);
+                        } catch (IllegalAccessException
+                                | IllegalArgumentException
+                                | InvocationTargetException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                    }, annotation.value().getDataType());
+                }
+            }
             repo.saveAll(generator.create(100, 0));
         }
     }
