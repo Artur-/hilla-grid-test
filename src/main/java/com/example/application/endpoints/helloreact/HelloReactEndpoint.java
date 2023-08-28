@@ -9,11 +9,7 @@ import dev.hilla.Nonnull;
 public class HelloReactEndpoint {
 
     @Nonnull
-    public String sayHello(@Nonnull String name) {
-        if (name.isEmpty()) {
-            return "Hello stranger";
-        } else {
-            return "Hello " + name;
-        }
+    public String sayHello(Person person) {
+        return "foo";
     }
 }
