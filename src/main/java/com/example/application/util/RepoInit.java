@@ -1,28 +1,21 @@
-package com.example.application.endpoints.helloreact;
+package com.example.application.util;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 
-import dev.hilla.Endpoint;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.vaadin.exampledata.ExampleDataGenerator;
-import com.vaadin.flow.server.auth.AnonymousAllowed;
 
-@Endpoint
-@AnonymousAllowed
-public class PersonEndpoint {
+public class RepoInit {
 
-    private PersonRepository repo;
-
-    public PersonEndpoint(PersonRepository repo) {
-        this.repo = repo;
+    public static <T> void initIfNeeded(JpaRepository<T, ?> repo,
+            Class<T> type) {
         if (repo.count() == 0L) {
-            ExampleDataGenerator<Person> generator = new ExampleDataGenerator<>(
-                    Person.class, LocalDateTime.of(2022, 1, 2, 1, 2, 3));
-            for (Method m : Person.class.getMethods()) {
+            ExampleDataGenerator<T> generator = new ExampleDataGenerator<>(type,
+                    LocalDateTime.of(2022, 1, 2, 1, 2, 3));
+            for (Method m : type.getMethods()) {
                 ExampleData annotation = m.getAnnotation(ExampleData.class);
                 if (annotation != null) {
                     generator.setData((instance, value) -> {
@@ -41,8 +34,4 @@ public class PersonEndpoint {
         }
     }
 
-    public Page<Person> list(Pageable pageable) {
-        return repo.findAll(pageable);
-
-    }
 }

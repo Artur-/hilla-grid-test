@@ -46,10 +46,13 @@ export const data = <T,>(
         console.log("Response for ", req);
         if (items.length === pageSize) {
           size = (pageNumber + 1) * pageSize + 1;
+          if (size < (grid as any)._cache.size) {
+            // Only allow size to grow here
+            size = undefined;
+          }
         } else {
           size = pageNumber * pageSize + items.length;
         }
-        // callback(items, Math.max((grid as any)._cache.size, size));
         callback(items, size);
       });
     };
@@ -75,6 +78,6 @@ export const data = <T,>(
 
   return {
     ref,
-    children
+    children,
   };
 };

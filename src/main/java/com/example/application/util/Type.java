@@ -1,4 +1,4 @@
-package com.example.application.endpoints.helloreact;
+package com.example.application.util;
 
 import com.vaadin.exampledata.DataType;
 

@@ -1,4 +1,4 @@
-package com.example.application.endpoints.helloreact;
+package com.example.application.util;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

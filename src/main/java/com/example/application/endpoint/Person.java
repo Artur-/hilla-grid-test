@@ -1,10 +1,11 @@
-package com.example.application.endpoints.helloreact;
+package com.example.application.endpoint;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 
-import com.vaadin.exampledata.DataType;
+import com.example.application.util.ExampleData;
+import com.example.application.util.Type;
 
 @Entity
 public class Person {
@@ -13,7 +14,7 @@ public class Person {
     @GeneratedValue
     private Long id;
 
-    private String firstName, lastName;
+    private String firstName, lastName, email;
 
     public String getFirstName() {
         return firstName;
@@ -31,5 +32,14 @@ public class Person {
     @ExampleData(Type.LAST_NAME)
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    @ExampleData(Type.EMAIL)
+    public void setEmail(String email) {
+        this.email = email;
     }
 }
