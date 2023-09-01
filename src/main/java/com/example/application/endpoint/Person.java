@@ -4,6 +4,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
 import com.example.application.util.ExampleData;
 import com.example.application.util.Type;
 
@@ -14,24 +17,22 @@ public class Person {
     @GeneratedValue
     private Long id;
 
-    private String firstName, lastName, email;
+    private String name, email;
+    private LocalDate dateOfBirth;
 
-    public String getFirstName() {
-        return firstName;
-    }
+    @CustomFormatter("intToEuros")
+    private int salary;
 
-    @ExampleData(Type.FIRST_NAME)
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
+    // @NumberFormat(pattern = "#0,00 €")
+    private BigDecimal taxesPaid;
 
-    public String getLastName() {
-        return lastName;
+    public String getName() {
+        return name;
     }
 
     @ExampleData(Type.LAST_NAME)
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getEmail() {
@@ -42,4 +43,31 @@ public class Person {
     public void setEmail(String email) {
         this.email = email;
     }
+
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    @ExampleData(Type.DATE_OF_BIRTH)
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public int getSalary() {
+        return salary;
+    }
+
+    @ExampleData(Type.SALARY)
+    public void setSalary(int salary) {
+        this.salary = salary;
+    }
+
+    public BigDecimal getTaxesPaid() {
+        return taxesPaid;
+    }
+
+    public void setTaxesPaid(BigDecimal taxesPaid) {
+        this.taxesPaid = taxesPaid;
+    }
+
 }

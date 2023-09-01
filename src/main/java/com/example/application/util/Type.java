@@ -5,6 +5,8 @@ import com.vaadin.exampledata.DataType;
 public enum Type {
     FIRST_NAME(DataType.FIRST_NAME), //
     LAST_NAME(DataType.LAST_NAME), //
+    NAME(DataType.FULL_NAME), //
+    SALARY(DataType.AMOUNT_OF_MONEY), //
     EMAIL(DataType.EMAIL), //
     DATE_OF_BIRTH(DataType.DATE_OF_BIRTH);
 

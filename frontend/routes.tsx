@@ -1,8 +1,14 @@
-import MainLayout from 'Frontend/views/MainLayout.js';
-import { lazy } from 'react';
-import { createBrowserRouter, IndexRouteObject, NonIndexRouteObject, useMatches } from 'react-router-dom';
+import MainLayout from "Frontend/views/MainLayout.js";
+import { lazy } from "react";
+import {
+  createBrowserRouter,
+  IndexRouteObject,
+  NonIndexRouteObject,
+  useMatches,
+} from "react-router-dom";
+import MasterDetail from "./views/MasterDetail";
 
-const PersonView = lazy(async () => import('Frontend/views/about/PersonView.js'));
+const ReadOnlyGrid = lazy(async () => import("Frontend/views/ReadOnlyGrid.js"));
 export type MenuProps = Readonly<{
   icon?: string;
   title?: string;
@@ -30,9 +36,22 @@ export const useViewMatches = useMatches as () => readonly ViewRouteMatch[];
 export const routes: readonly ViewRouteObject[] = [
   {
     element: <MainLayout />,
-    handle: { icon: 'null', title: 'Main' },
+    handle: { icon: "null", title: "Main" },
     children: [
-      { path: '/', element: <PersonView />, handle: { icon: 'file', title: 'About' } },
+      {
+        path: "/",
+        element: <></>,
+      },
+      {
+        path: "/readonly-grid",
+        element: <ReadOnlyGrid />,
+        handle: { icon: "file", title: "Read only grid" },
+      },
+      {
+        path: "/master-detail",
+        element: <MasterDetail />,
+        handle: { icon: "file", title: "Master detail" },
+      },
     ],
   },
 ];
