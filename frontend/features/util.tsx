@@ -1,31 +1,41 @@
 import { ModelConstructor } from "@hilla/form";
 import {
-    GridDataProviderCallback,
-    GridDataProviderParams,
-    GridElement,
+  GridDataProviderCallback,
+  GridDataProviderParams,
+  GridElement,
 } from "@hilla/react-components/Grid.js";
 import { GridSortColumn } from "@hilla/react-components/GridSortColumn.js";
 import Pageable from "Frontend/generated/dev/hilla/mappedtypes/Pageable";
 import Sort from "Frontend/generated/dev/hilla/mappedtypes/Sort";
 import Direction from "Frontend/generated/org/springframework/data/domain/Sort/Direction";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { Formatter, getCustomFormatter, getTypeFormatter } from "./formatter";
+import { getProperties } from "./modelutil";
 
-type EndpointType<T> = {
+export interface CrudEndpoint<T> extends ListEndpoint<T> {
+    
+}
+export interface ListEndpoint<T> {
   list: {
     (request: Pageable): Promise<T[]>;
-    // returnType: ModelConstructor<T, any>;
+    returnType: ModelConstructor<T, any>;
   };
-};
+}
 
-export const data = <T,>(endpoint: EndpointType<T>, options?: any) => {
+interface ColumnOptions {
+  formatter: Formatter;
+}
+interface Options {
+  columns: Record<string, ColumnOptions>;
+}
+export const data = <T,>(endpoint: ListEndpoint<T>, options?: Options) => {
   const listMethod = endpoint.list;
-
-  const model: ModelConstructor<T, any> = (listMethod as any).returnType;
+  const model: ModelConstructor<T, any> = listMethod.returnType;
   const ref = useRef(null);
   useEffect(() => {
     const grid = ref.current as any as GridElement<T>;
 
+    let first = true;
     grid.dataProvider = (
       params: GridDataProviderParams<T>,
       callback: GridDataProviderCallback<T>
@@ -60,38 +70,37 @@ export const data = <T,>(endpoint: EndpointType<T>, options?: any) => {
           size = pageNumber * pageSize + items.length;
         }
         callback(items, size);
+        if (first) {
+          first = false;
+          setTimeout(() => grid.recalculateColumnWidths(), 0);
+        }
       });
     };
   }, []);
 
-  const properties = Object.keys(
-    Object.getOwnPropertyDescriptors(model.prototype)
-  ).filter((p) => p !== "constructor" && !p.endsWith("Options"));
+  const properties = getProperties(model);
   const children = properties.map((p) => {
-    let renderer = (value: any) => <>{value.item[p]}</>;
-    let customProps: any = { AutoWidth: true };
-    let columnOptions = options?.columns;
-    columnOptions = columnOptions ? columnOptions[p] : undefined;
-    const customOptions = new (model as any)()[p + "Options"];
-    const propertyType = customOptions?.javaType;
-    console.log("propertyType", propertyType);
-    const customFormatterName = customOptions?.customFormatter;
+    const name = p.name;
+    let renderer = (value: any) => <>{value.item[name]}</>;
+    let customProps: any = { autoWidth: true };
+    const columnOptions = options?.columns?.[name];
     let formatter: Formatter | undefined = columnOptions?.formatter;
-    if (!formatter) {
-      formatter = getCustomFormatter(customFormatterName);
+    const typeFormatter = getTypeFormatter(p.javaType);
+    if (typeFormatter?.columnOptions) {
+      // Always apply as a base
+      customProps = { ...customProps, ...typeFormatter.columnOptions };
     }
     if (!formatter) {
-      formatter = getTypeFormatter(propertyType);
+      formatter = getCustomFormatter(p.customFormatterName);
+    }
+    if (!formatter) {
+      formatter = typeFormatter;
     }
     if (formatter) {
-      renderer = (value: any) => <>{formatter!(value.item[p])}</>;
+      renderer = (value: any) => <>{formatter!(value.item[p.name])}</>;
       if (formatter.columnOptions) {
         customProps = { ...customProps, ...formatter.columnOptions };
       }
-    }
-    if (p === "taxesPaid") {
-      customProps.textAlign = "end";
-      customProps.flexGrow = 0;
     }
     //   if (isEntityReference(Model, p)) {
     //     return html`<vaadin-grid-sort-column
@@ -100,7 +109,12 @@ export const data = <T,>(endpoint: EndpointType<T>, options?: any) => {
     //     ></vaadin-grid-sort-column>`;
     //   } else {
     return (
-      <GridSortColumn path={p} key={p} {...customProps}>
+      <GridSortColumn
+        path={p.name}
+        header={p.humanReadableName}
+        key={p.name}
+        {...customProps}
+      >
         {renderer}
       </GridSortColumn>
     );

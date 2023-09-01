@@ -1,21 +1,20 @@
-import { Grid } from "@hilla/react-components/Grid.js";
 import * as PersonEndpoint from "Frontend/generated/PersonEndpoint-modified.js";
-import { data } from "../features/util";
-import Person from "Frontend/generated/com/example/application/endpoint/Person";
-import { useState } from "react";
+import PersonModel from "Frontend/generated/com/example/application/endpoint/PersonModel-mod";
+import Crud from "./Crud";
+import { setLocale } from "Frontend/features/applicationconfiguration";
+import {
+  defineCustomFormatter,
+  getTypeFormatter,
+} from "Frontend/features/formatter";
 
 export default function MasterDetail() {
-  const [selectedItems, setSelectedItems] = useState<Person[]>([]);
   return (
     <>
-      <Grid
-        {...data(PersonEndpoint)}
-        selectedItems={selectedItems}
-        onActiveItemChanged={(e) => {
-          const item = e.detail.value;
-          setSelectedItems(item ? [item] : []);
-        }}
-      ></Grid>
+      <Crud style={{ height: "100%" }} endpoint={PersonEndpoint}></Crud>
     </>
   );
 }
+setLocale("fi");
+defineCustomFormatter("intToEuros", (value: number) => {
+  return getTypeFormatter("Integer")(value / 100) + " €";
+});

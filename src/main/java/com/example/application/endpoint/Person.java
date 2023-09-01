@@ -30,7 +30,7 @@ public class Person {
         return name;
     }
 
-    @ExampleData(Type.LAST_NAME)
+    @ExampleData(Type.NAME)
     public void setName(String name) {
         this.name = name;
     }

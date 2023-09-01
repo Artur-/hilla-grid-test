@@ -26,6 +26,10 @@ public class RepoInit {
                 if (annotation != null) {
                     generator.setData((instance, value) -> {
                         try {
+                            if (annotation.value() == Type.SALARY) {
+                                m.invoke(instance, ((Integer) value) * 100);
+                                return;
+                            }
                             m.invoke(instance, value);
                         } catch (IllegalAccessException
                                 | IllegalArgumentException

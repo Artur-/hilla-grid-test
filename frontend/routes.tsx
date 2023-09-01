@@ -1,4 +1,4 @@
-import MainLayout from "Frontend/views/MainLayout.js";
+import MainLayout from "Frontend/MainLayout.js";
 import { lazy } from "react";
 import {
   createBrowserRouter,
@@ -7,6 +7,7 @@ import {
   useMatches,
 } from "react-router-dom";
 import MasterDetail from "./views/MasterDetail";
+import DatePickerView from "./views/DatePickerView";
 
 const ReadOnlyGrid = lazy(async () => import("Frontend/views/ReadOnlyGrid.js"));
 export type MenuProps = Readonly<{
@@ -51,6 +52,11 @@ export const routes: readonly ViewRouteObject[] = [
         path: "/master-detail",
         element: <MasterDetail />,
         handle: { icon: "file", title: "Master detail" },
+      },
+      {
+        path: "/datepicker",
+        element: <DatePickerView />,
+        handle: { icon: "file", title: "Date picker" },
       },
     ],
   },
