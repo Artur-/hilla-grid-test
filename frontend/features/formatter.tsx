@@ -71,6 +71,5 @@ export function getTypeFormatter(type: string) {
 
 export const datePickerFormatter = (date: DatePickerDate): string => {
   const d = new Date(date.year, date.month, date.day);
-  //   return typeFormatters.LocalDate(
-  return "foo";
+  return typeFormatters.LocalDate(d);
 };

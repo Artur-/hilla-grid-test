@@ -5,11 +5,10 @@ import { HorizontalLayout } from "@hilla/react-components/HorizontalLayout.js";
 import { TextField } from "@hilla/react-components/TextField.js";
 import { VerticalLayout } from "@hilla/react-components/VerticalLayout.js";
 import { useForm } from "@hilla/react-form";
-import { DatePicker as DatePickerElement } from "@vaadin/date-picker/vaadin-date-picker.js";
 import { datePickerDefaulti18n } from "Frontend/features/datepickerdefault";
 import { datePickerFormatter } from "Frontend/features/formatter";
 import { getProperties } from "Frontend/features/modelutil";
-import { CSSProperties, useEffect, useRef, useState } from "react";
+import { CSSProperties, useEffect, useState } from "react";
 import { CrudEndpoint, data } from "../features/util";
 export default function Crud<T = any>(props: {
   style: CSSProperties;
