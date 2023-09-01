@@ -16,5 +16,5 @@ export default function MasterDetail() {
 }
 setLocale("fi");
 defineCustomFormatter("intToEuros", (value: number) => {
-  return getTypeFormatter("Integer")(value / 100) + " €";
+  return getTypeFormatter("Integer")!(value / 100) + " €";
 });

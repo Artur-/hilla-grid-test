@@ -1,10 +1,14 @@
 import { ModelConstructor } from "@hilla/form";
+import { Formatter, getCustomFormatter, getTypeFormatter } from "./formatter";
+import { GridColumn } from "@vaadin/grid";
 
 export interface PropertyInfo {
   name: string;
   javaType: string;
   customFormatterName: string;
   humanReadableName: string;
+  formatter: Formatter<any>;
+  columnOptions: Partial<GridColumn>;
 }
 export const getProperties = (
   model: ModelConstructor<any, any>
@@ -18,7 +22,38 @@ export const getProperties = (
     const javaType = customOptions?.javaType;
     const customFormatterName = customOptions?.customFormatter;
     const humanReadableName = _generateHeader(name);
-    return { name, humanReadableName, javaType, customFormatterName };
+
+    const typeFormatter = getTypeFormatter(javaType);
+    const customFormatter = customFormatterName
+      ? getCustomFormatter(customFormatterName)
+      : undefined;
+    let formatter = customFormatter ?? typeFormatter;
+
+    let columnOptions = {};
+    if (typeFormatter?.columnOptions) {
+      columnOptions = {
+        ...columnOptions,
+        ...typeFormatter.columnOptions,
+      };
+    }
+    if (formatter?.columnOptions) {
+      columnOptions = {
+        ...columnOptions,
+        ...formatter.columnOptions,
+      };
+    }
+    if (!formatter) {
+      formatter = (value) => value;
+    }
+
+    return {
+      name,
+      humanReadableName,
+      javaType,
+      customFormatterName,
+      formatter,
+      columnOptions,
+    };
   });
 };
 

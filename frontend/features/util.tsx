@@ -8,13 +8,11 @@ import { GridSortColumn } from "@hilla/react-components/GridSortColumn.js";
 import Pageable from "Frontend/generated/dev/hilla/mappedtypes/Pageable";
 import Sort from "Frontend/generated/dev/hilla/mappedtypes/Sort";
 import Direction from "Frontend/generated/org/springframework/data/domain/Sort/Direction";
-import { useEffect, useMemo, useRef } from "react";
-import { Formatter, getCustomFormatter, getTypeFormatter } from "./formatter";
+import { useEffect, useRef } from "react";
+import { Formatter } from "./formatter";
 import { getProperties } from "./modelutil";
 
-export interface CrudEndpoint<T> extends ListEndpoint<T> {
-    
-}
+export interface CrudEndpoint<T> extends ListEndpoint<T> {}
 export interface ListEndpoint<T> {
   list: {
     (request: Pageable): Promise<T[]>;
@@ -23,7 +21,7 @@ export interface ListEndpoint<T> {
 }
 
 interface ColumnOptions {
-  formatter: Formatter;
+  formatter: Formatter<any>;
 }
 interface Options {
   columns: Record<string, ColumnOptions>;
@@ -84,23 +82,15 @@ export const data = <T,>(endpoint: ListEndpoint<T>, options?: Options) => {
     let renderer = (value: any) => <>{value.item[name]}</>;
     let customProps: any = { autoWidth: true };
     const columnOptions = options?.columns?.[name];
-    let formatter: Formatter | undefined = columnOptions?.formatter;
-    const typeFormatter = getTypeFormatter(p.javaType);
-    if (typeFormatter?.columnOptions) {
-      // Always apply as a base
-      customProps = { ...customProps, ...typeFormatter.columnOptions };
+    const formatter = p.formatter;
+    const propertyColumnOptions = p.columnOptions;
+
+    renderer = (value: any) => <>{formatter(value.item[p.name])}</>;
+    if (propertyColumnOptions) {
+      customProps = { ...customProps, ...propertyColumnOptions };
     }
-    if (!formatter) {
-      formatter = getCustomFormatter(p.customFormatterName);
-    }
-    if (!formatter) {
-      formatter = typeFormatter;
-    }
-    if (formatter) {
-      renderer = (value: any) => <>{formatter!(value.item[p.name])}</>;
-      if (formatter.columnOptions) {
-        customProps = { ...customProps, ...formatter.columnOptions };
-      }
+    if (columnOptions) {
+      customProps = { ...customProps, columnOptions };
     }
     //   if (isEntityReference(Model, p)) {
     //     return html`<vaadin-grid-sort-column

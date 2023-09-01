@@ -31,7 +31,10 @@ export default function Crud<T = any>(props: {
       field = (
         <DatePicker
           {...commonProps}
-          i18n={{ ...datePickerDefaulti18n, formatDate: datePickerFormatter }}
+          i18n={{
+            ...datePickerDefaulti18n,
+            formatDate: datePickerFormatter(prop.formatter),
+          }}
         ></DatePicker>
       );
     } else {
