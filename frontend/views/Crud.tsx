@@ -10,12 +10,17 @@ import { datePickerFormatter } from "Frontend/features/formatter";
 import { getProperties } from "Frontend/features/modelutil";
 import { CSSProperties, useEffect, useState } from "react";
 import { CrudEndpoint, data } from "../features/util";
+import Filter from "Frontend/generated/com/example/application/util/Filter";
+
+const filter: Filter | undefined = undefined;
+
 export default function Crud<T = any>(props: {
-  style: CSSProperties;
+  style?: CSSProperties;
   endpoint: CrudEndpoint<T>;
 }) {
   const [item, setItem] = useState<T>();
-  const model = props.endpoint.list.returnType;
+  const endpoint = props.endpoint;
+  const model = endpoint.list.returnType;
   const form = useForm(model);
   useEffect(() => {
     form.setValue(item);
@@ -44,7 +49,15 @@ export default function Crud<T = any>(props: {
   });
   const buttons = (
     <HorizontalLayout theme="spacing">
-      <Button onClick={(e) => console.log("click")}>Save</Button>
+      <Button
+        onClick={async (e) => {
+          debugger;
+          setItem(await endpoint.update(form.value));
+          //   grid.refresh;
+        }}
+      >
+        Save
+      </Button>
       <Button>Discard</Button>
       <Button>Cancel</Button>
     </HorizontalLayout>
@@ -59,13 +72,14 @@ export default function Crud<T = any>(props: {
   return (
     <HorizontalLayout style={{ ...props.style }} theme="spacing">
       <Grid
+        // ref={abc}
         style={{ height: "100%" }}
-        {...data(props.endpoint)}
         selectedItems={[item]}
         onActiveItemChanged={(e) => {
           const item = e.detail.value;
           setItem(item ? item : undefined);
         }}
+        {...data(props.endpoint, filter)}
       ></Grid>
       {formLayout}
     </HorizontalLayout>

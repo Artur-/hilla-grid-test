@@ -8,7 +8,14 @@ import * as PersonEndpoint from "Frontend/generated/PersonEndpoint-modified.js";
 import { data } from "../features/util";
 
 export default function ReadOnlyGrid() {
-  return <Grid {...data(PersonEndpoint)}></Grid>;
+  return (
+    <>
+      <pre style={{ marginLeft: "1em" }}>
+        &lt;Grid ...data(PersonEndpoint)&gt;
+      </pre>
+      <Grid {...data(PersonEndpoint)}></Grid>
+    </>
+  );
 }
 
 setLocale("fi");

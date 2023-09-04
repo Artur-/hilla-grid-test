@@ -12,10 +12,17 @@ import { useEffect, useRef } from "react";
 import { Formatter } from "./formatter";
 import { getProperties } from "./modelutil";
 
-export interface CrudEndpoint<T> extends ListEndpoint<T> {}
+import css from "./util.module.css";
+import Filter from "Frontend/generated/com/example/application/util/Filter";
+
+export interface CrudEndpoint<T> extends ListEndpoint<T> {
+  update: {
+    (value: T): Promise<T>;
+  };
+}
 export interface ListEndpoint<T> {
   list: {
-    (request: Pageable): Promise<T[]>;
+    (request: Pageable, filter: Filter|undefined): Promise<T[]>;
     returnType: ModelConstructor<T, any>;
   };
 }
@@ -23,10 +30,16 @@ export interface ListEndpoint<T> {
 interface ColumnOptions {
   formatter: Formatter<any>;
 }
+
 interface Options {
   columns: Record<string, ColumnOptions>;
 }
-export const data = <T,>(endpoint: ListEndpoint<T>, options?: Options) => {
+
+export const data = <T,>(
+  endpoint: ListEndpoint<T>,
+  filter?: Filter,
+  options?: Options
+) => {
   const listMethod = endpoint.list;
   const model: ModelConstructor<T, any> = listMethod.returnType;
   const ref = useRef(null);
@@ -55,7 +68,7 @@ export const data = <T,>(endpoint: ListEndpoint<T>, options?: Options) => {
       };
       console.log("Request for ", req);
 
-      listMethod(req).then((items) => {
+      listMethod(req, filter).then((items) => {
         let size;
         console.log("Response for ", req);
         if (items.length === pageSize) {
@@ -74,7 +87,7 @@ export const data = <T,>(endpoint: ListEndpoint<T>, options?: Options) => {
         }
       });
     };
-  }, []);
+  }, [filter]);
 
   const properties = getProperties(model);
   const children = properties.map((p) => {
@@ -85,7 +98,9 @@ export const data = <T,>(endpoint: ListEndpoint<T>, options?: Options) => {
     const formatter = p.formatter;
     const propertyColumnOptions = p.columnOptions;
 
-    renderer = (value: any) => <>{formatter(value.item[p.name])}</>;
+    renderer = (value: any) => (
+      <span className={css.number}>{formatter(value.item[p.name])}</span>
+    );
     if (propertyColumnOptions) {
       customProps = { ...customProps, ...propertyColumnOptions };
     }

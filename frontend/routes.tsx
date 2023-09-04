@@ -7,6 +7,7 @@ import {
     useMatches,
 } from "react-router-dom";
 import MasterDetail from "./views/MasterDetail";
+import GridWithFilter from "./views/GridWithFilter";
 
 const ReadOnlyGrid = lazy(async () => import("Frontend/views/ReadOnlyGrid.js"));
 export type MenuProps = Readonly<{
@@ -46,6 +47,11 @@ export const routes: readonly ViewRouteObject[] = [
         path: "/readonly-grid",
         element: <ReadOnlyGrid />,
         handle: { icon: "file", title: "Read only grid" },
+      },
+      {
+        path: "/filter-grid",
+        element: <GridWithFilter />,
+        handle: { icon: "file", title: "Grid with filters" },
       },
       {
         path: "/master-detail",

@@ -2,7 +2,9 @@ package com.example.application.endpoint;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.Email;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -14,10 +16,14 @@ import com.example.application.util.Type;
 public class Person {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name, email;
+    private String name;
+
+    @Email
+    private String email;
+    
     private LocalDate dateOfBirth;
 
     @CustomFormatter("intToEuros")
@@ -25,6 +31,14 @@ public class Person {
 
     // @NumberFormat(pattern = "#0,00 €")
     private BigDecimal taxesPaid;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;

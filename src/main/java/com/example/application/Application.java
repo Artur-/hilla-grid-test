@@ -2,12 +2,16 @@ package com.example.application;
 
 import jakarta.annotation.PostConstruct;
 
+import javax.sql.DataSource;
+
 import com.example.application.endpoint.Person;
 import com.example.application.endpoint.PersonRepository;
 import com.example.application.util.RepoInit;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.h2.H2ConsoleProperties;
 
 import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.theme.Theme;
