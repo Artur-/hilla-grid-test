@@ -30,7 +30,6 @@ typeFormatters.Double.columnOptions = {
 };
 typeFormatters.LocalDate = (value: string) => {
   return format(new Date(value), "P");
-  //   return value;
 };
 typeFormatters.LocalDate.columnOptions = {
   textAlign: "end",

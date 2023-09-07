@@ -5,15 +5,30 @@ import {
   getTypeFormatter,
 } from "Frontend/features/formatter";
 import * as PersonEndpoint from "Frontend/generated/PersonEndpoint-modified.js";
-import { data } from "../features/util";
+import { useAutoGrid } from "../features/util";
+import { Button } from "@hilla/react-components/Button.js";
+import { useState } from "react";
+import PersonModel from "Frontend/generated/com/example/application/endpoint/PersonModel-mod";
 
 export default function ReadOnlyGrid() {
+  const [showGrid, setShowGrid] = useState(true);
+
+  // const autoGrid = useAutoGrid(PersonEndpoint);
+  // const form = useFormGenerator(PersonModel);
+  //   const autoCrud = useAutoCrud(PersonEndpoint);
+
   return (
     <>
-      <pre style={{ marginLeft: "1em" }}>
-        &lt;Grid ...data(PersonEndpoint)&gt;
-      </pre>
-      <Grid {...data(PersonEndpoint)}></Grid>
+      {/* (showGrid ?  */}
+      <Grid {...useAutoGrid(PersonEndpoint)}></Grid>
+      {/* <Button
+        onClick={(e) => {
+          setShowGrid(true);
+        }}
+      >
+        Show grid
+      </Button>
+      ); */}
     </>
   );
 }

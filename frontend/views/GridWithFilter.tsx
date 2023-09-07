@@ -2,44 +2,33 @@ import { Grid } from "@hilla/react-components/Grid.js";
 import { TextField } from "@hilla/react-components/TextField.js";
 import { VerticalLayout } from "@hilla/react-components/VerticalLayout.js";
 import { setLocale } from "Frontend/features/applicationconfiguration";
-import {
-  defineCustomFormatter,
-  getTypeFormatter,
-} from "Frontend/features/formatter";
+import { useAutoGrid } from "Frontend/features/util";
 import * as PersonEndpoint from "Frontend/generated/PersonEndpoint-modified.js";
-import { data } from "../features/util";
-import { useState } from "react";
 import Filter from "Frontend/generated/com/example/application/util/Filter";
+import Type from "Frontend/generated/com/example/application/util/PropertyFilter/Type";
+import { useState } from "react";
 
 export default function GridWithFilter() {
   const [filter, setFilter] = useState<Filter>();
   return (
     <VerticalLayout theme="spacing padding">
-      Note, only the filter text field changed last is applied
       <TextField
+        style={{ width: "25em" }}
         onInput={(e) => {
           setFilter({
-            type: "prop",
-            propertyId: "name",
-            filterValue: (e.target as any).value,
-          });
-        }}
-        label="Search for name"
-      ></TextField>
-      <TextField
-        onInput={(e) => {
-          setFilter({
-            type: "or",
+            t: "or",
             children: [
               {
-                type: "prop",
+                t: "prop",
                 propertyId: "name",
                 filterValue: (e.target as any).value,
+                type: Type.CONTAINS,
               },
               {
-                type: "prop",
+                t: "prop",
                 propertyId: "email",
                 filterValue: (e.target as any).value,
+                type: Type.CONTAINS,
               },
             ],
           });
@@ -47,7 +36,7 @@ export default function GridWithFilter() {
         label="Search for name or email"
       ></TextField>
       Filter: {JSON.stringify(filter)}
-      <Grid {...data(PersonEndpoint, filter)}></Grid>;
+      <Grid {...useAutoGrid(PersonEndpoint, filter)}></Grid>;
     </VerticalLayout>
   );
 }

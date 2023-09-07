@@ -1,19 +1,25 @@
 import { ModelConstructor } from "@hilla/form";
+import { Button } from "@hilla/react-components/Button.js";
 import {
-  GridDataProviderCallback,
-  GridDataProviderParams,
-  GridElement,
+    GridDataProviderCallback,
+    GridDataProviderParams,
+    GridElement,
 } from "@hilla/react-components/Grid.js";
+import { GridColumnGroup } from "@hilla/react-components/GridColumnGroup.js";
 import { GridSortColumn } from "@hilla/react-components/GridSortColumn.js";
+import { VerticalLayout } from "@hilla/react-components/VerticalLayout.js";
+import { UseFormResult, useForm } from "@hilla/react-form";
+import Filter from "Frontend/generated/com/example/application/util/Filter";
+import Type from "Frontend/generated/com/example/application/util/PropertyFilter/Type";
 import Pageable from "Frontend/generated/dev/hilla/mappedtypes/Pageable";
 import Sort from "Frontend/generated/dev/hilla/mappedtypes/Sort";
+import { HillaDevelopmentEndpoint } from "Frontend/generated/endpoints";
 import Direction from "Frontend/generated/org/springframework/data/domain/Sort/Direction";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { createField } from "./field-factory";
 import { Formatter } from "./formatter";
 import { getProperties } from "./modelutil";
-
 import css from "./util.module.css";
-import Filter from "Frontend/generated/com/example/application/util/Filter";
 
 export interface CrudEndpoint<T> extends ListEndpoint<T> {
   update: {
@@ -22,7 +28,7 @@ export interface CrudEndpoint<T> extends ListEndpoint<T> {
 }
 export interface ListEndpoint<T> {
   list: {
-    (request: Pageable, filter: Filter|undefined): Promise<T[]>;
+    (request: Pageable, filter: Filter | undefined): Promise<T[]>;
     returnType: ModelConstructor<T, any>;
   };
 }
@@ -32,17 +38,49 @@ interface ColumnOptions {
 }
 
 interface Options {
+  headerFilters: boolean;
   columns: Record<string, ColumnOptions>;
 }
 
-export const data = <T,>(
-  endpoint: ListEndpoint<T>,
+export const useAutoCrud = <T,>(
+  endpoint: CrudEndpoint<T>,
+  formGenerator?: (
+    form: UseFormResult<T, any>,
+    buttons: JSX.Element
+  ) => JSX.Element
+): {
+  endpoint: CrudEndpoint<T>;
+  form: UseFormResult<T, any>;
+  formGenerator: (
+    form: UseFormResult<T, any>,
+    buttons: JSX.Element
+  ) => JSX.Element;
+} => {
+  const model = endpoint.list.returnType;
+  const form = useForm(model);
+  if (!formGenerator) {
+    formGenerator = (form, buttons) => (
+      <VerticalLayout theme="padding spacing">
+        {getProperties(model).map((prop) =>
+          createField(prop, form.field(form.model[prop.name]))
+        )}
+        {buttons}
+      </VerticalLayout>
+    );
+  }
+  return { endpoint, form, formGenerator };
+};
+
+export const useAutoGrid = <T,>(
+  endpoint: CrudEndpoint<T>,
   filter?: Filter,
-  options?: Options
+  options?: Partial<Options>
 ) => {
   const listMethod = endpoint.list;
   const model: ModelConstructor<T, any> = listMethod.returnType;
   const ref = useRef(null);
+  const [internalFilter, setInternalFilter] = useState<Filter>();
+
   useEffect(() => {
     const grid = ref.current as any as GridElement<T>;
 
@@ -68,7 +106,7 @@ export const data = <T,>(
       };
       console.log("Request for ", req);
 
-      listMethod(req, filter).then((items) => {
+      listMethod(req, filter ?? internalFilter).then((items) => {
         let size;
         console.log("Response for ", req);
         if (items.length === pageSize) {
@@ -87,7 +125,7 @@ export const data = <T,>(
         }
       });
     };
-  }, [filter]);
+  }, [filter, internalFilter]);
 
   const properties = getProperties(model);
   const children = properties.map((p) => {
@@ -113,7 +151,7 @@ export const data = <T,>(
     //       path="${p}.name"
     //     ></vaadin-grid-sort-column>`;
     //   } else {
-    return (
+    let column = (
       <GridSortColumn
         path={p.name}
         header={p.humanReadableName}
@@ -123,10 +161,80 @@ export const data = <T,>(
         {renderer}
       </GridSortColumn>
     );
+
+    if (options?.headerFilters) {
+      const headerRenderer = useCallback(() => {
+        return createField(p, {
+          onInput: (e: any) => {
+            const fieldValue = (e.target as any).value;
+            const filterValue = fieldValue;
+
+            const filter = {
+              t: "prop",
+              propertyId: p.name,
+              filterValue,
+              type: Type.GREATER_THAN_OR_EQUALS,
+            };
+            setInternalFilter(filter);
+          },
+        });
+      }, []);
+
+      column = (
+        <GridColumnGroup key={"group" + p.name} headerRenderer={headerRenderer}>
+          {column}
+        </GridColumnGroup>
+      );
+    }
+
+    return column;
   });
 
   return {
     ref,
-    children,
+    children: [
+      ...children,
+      <div
+        slot="tooltip"
+        style={{
+          background: "white",
+          position: "absolute",
+          bottom: "1em",
+          right: "1em",
+          transition: "opacity 0.3s ease-in-out",
+          opacity: "var(--dev-tools-opacity, 0)",
+        }}
+      >
+        <VerticalLayout
+          style={{
+            display: "inline-flex",
+            padding: "10px",
+            border: "1px solid #00f",
+            borderRadius: "5px",
+          }}
+        >
+          Dev tools
+          <Button
+            onClick={(e) => {
+              HillaDevelopmentEndpoint.generateData(
+                "com.example.application.endpoint.Person",
+                100
+              ).then(() => (ref.current! as any).clearCache());
+            }}
+          >
+            Generate
+          </Button>
+          <Button
+            onClick={(e) => {
+              HillaDevelopmentEndpoint.deleteData(
+                "com.example.application.endpoint.Person"
+              ).then(() => (ref.current! as any).clearCache());
+            }}
+          >
+            Delete all
+          </Button>
+        </VerticalLayout>
+      </div>,
+    ],
   };
 };

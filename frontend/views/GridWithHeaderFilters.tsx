@@ -1,18 +1,19 @@
+import { Grid } from "@hilla/react-components/Grid.js";
 import { setLocale } from "Frontend/features/applicationconfiguration";
 import {
   defineCustomFormatter,
   getTypeFormatter,
 } from "Frontend/features/formatter";
+import { useAutoGrid } from "Frontend/features/util";
 import * as PersonEndpoint from "Frontend/generated/PersonEndpoint-modified.js";
-import Crud from "./Crud";
 
-export default function MasterDetail() {
+export default function GridWithHeaderFilters() {
   return (
-    <>
-      <Crud endpoint={PersonEndpoint} style={{ height: "100%" }}></Crud>
-    </>
+    <Grid {...useAutoGrid(PersonEndpoint, undefined, { headerFilters: true })}></Grid>
+    // fields: {'name': {type: 'ComboBox'}}, columns{'name: {...}'} })}></Grid>
   );
 }
+
 setLocale("fi");
 defineCustomFormatter("intToEuros", (value: number) => {
   return getTypeFormatter("Integer")!(value / 100) + " €";

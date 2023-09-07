@@ -1,3 +1,7 @@
 .number {
   font-variant-numeric: tabular-nums;
 }
+
+vaadin-grid:hover {
+    --dev-tools-opacity: 1;
+}
