@@ -38,7 +38,10 @@ export default function Crud<T = any>(props: {
   );
 
   return (
-    <HorizontalLayout style={{ ...props.style }} theme="spacing">
+    <HorizontalLayout
+      style={{ height: "100%", ...props.style }}
+      theme="spacing"
+    >
       <Grid
         style={{ height: "100%" }}
         selectedItems={[item]}

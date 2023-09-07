@@ -1,0 +1,8 @@
+.myform {
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 50%;
+  align-content: flex-start;
+  gap: 1em;
+  margin: 1em;
+}
