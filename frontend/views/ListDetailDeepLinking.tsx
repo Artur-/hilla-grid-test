@@ -1,11 +1,11 @@
 import { setLocale } from "Frontend/features/applicationconfiguration";
+import { useAutoCrud } from "Frontend/features/autocrud";
 import {
-  defineCustomFormatter,
-  getTypeFormatter,
+    defineCustomFormatter,
+    getTypeFormatter,
 } from "Frontend/features/formatter";
 import * as PersonEndpoint from "Frontend/generated/PersonEndpoint-modified.js";
 import Crud from "../features/Crud";
-import { useAutoCrud } from "Frontend/features/util";
 
 export default function ListDetailDeepLinking() {
   const autoCrud = useAutoCrud(PersonEndpoint);

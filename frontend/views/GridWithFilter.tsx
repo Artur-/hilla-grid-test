@@ -2,7 +2,7 @@ import { Grid } from "@hilla/react-components/Grid.js";
 import { TextField } from "@hilla/react-components/TextField.js";
 import { VerticalLayout } from "@hilla/react-components/VerticalLayout.js";
 import { setLocale } from "Frontend/features/applicationconfiguration";
-import { useAutoGrid } from "Frontend/features/util";
+import { useAutoGrid } from "Frontend/features/autogrid";
 import * as PersonEndpoint from "Frontend/generated/PersonEndpoint-modified.js";
 import Filter from "Frontend/generated/com/example/application/util/Filter";
 import Type from "Frontend/generated/com/example/application/util/PropertyFilter/Type";

@@ -1,9 +1,9 @@
 import { setLocale } from "Frontend/features/applicationconfiguration";
+import { useAutoCrud } from "Frontend/features/autocrud";
 import {
     defineCustomFormatter,
     getTypeFormatter,
 } from "Frontend/features/formatter";
-import { useAutoCrud } from "Frontend/features/util";
 import * as PersonEndpoint from "Frontend/generated/PersonEndpoint-modified.js";
 import Person from "Frontend/generated/com/example/application/endpoint/Person";
 import Crud from "../features/Crud";

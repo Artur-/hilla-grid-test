@@ -1,14 +1,13 @@
 import { ModelConstructor } from "@hilla/form";
 import { Button } from "@hilla/react-components/Button.js";
 import {
-    GridDataProviderCallback,
-    GridDataProviderParams,
-    GridElement,
+  GridDataProviderCallback,
+  GridDataProviderParams,
+  GridElement,
 } from "@hilla/react-components/Grid.js";
 import { GridColumnGroup } from "@hilla/react-components/GridColumnGroup.js";
 import { GridSortColumn } from "@hilla/react-components/GridSortColumn.js";
 import { VerticalLayout } from "@hilla/react-components/VerticalLayout.js";
-import { UseFormResult, useForm } from "@hilla/react-form";
 import Filter from "Frontend/generated/com/example/application/util/Filter";
 import Type from "Frontend/generated/com/example/application/util/PropertyFilter/Type";
 import Pageable from "Frontend/generated/dev/hilla/mappedtypes/Pageable";
@@ -41,35 +40,6 @@ interface Options {
   headerFilters: boolean;
   columns: Record<string, ColumnOptions>;
 }
-
-export const useAutoCrud = <T,>(
-  endpoint: CrudEndpoint<T>,
-  formGenerator?: (
-    form: UseFormResult<T, any>,
-    buttons: JSX.Element
-  ) => JSX.Element
-): {
-  endpoint: CrudEndpoint<T>;
-  form: UseFormResult<T, any>;
-  formGenerator: (
-    form: UseFormResult<T, any>,
-    buttons: JSX.Element
-  ) => JSX.Element;
-} => {
-  const model = endpoint.list.returnType;
-  const form = useForm(model);
-  if (!formGenerator) {
-    formGenerator = (form, buttons) => (
-      <VerticalLayout theme="padding spacing">
-        {getProperties(model).map((prop) =>
-          createField(prop, form.field(form.model[prop.name]))
-        )}
-        {buttons}
-      </VerticalLayout>
-    );
-  }
-  return { endpoint, form, formGenerator };
-};
 
 export const useAutoGrid = <T,>(
   endpoint: CrudEndpoint<T>,

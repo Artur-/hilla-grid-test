@@ -4,7 +4,7 @@ import { HorizontalLayout } from "@hilla/react-components/HorizontalLayout.js";
 import { UseFormResult } from "@hilla/react-form";
 import Filter from "Frontend/generated/com/example/application/util/Filter";
 import { CSSProperties, useEffect, useState } from "react";
-import { CrudEndpoint, useAutoGrid } from "./util";
+import { CrudEndpoint, useAutoGrid } from "./autogrid";
 
 const filter: Filter | undefined = undefined;
 

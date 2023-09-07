@@ -5,7 +5,7 @@ import {
   getTypeFormatter,
 } from "Frontend/features/formatter";
 import * as PersonEndpoint from "Frontend/generated/PersonEndpoint-modified.js";
-import { useAutoGrid } from "../features/util";
+import { useAutoGrid } from "../features/autogrid";
 import { Button } from "@hilla/react-components/Button.js";
 import { useState } from "react";
 import PersonModel from "Frontend/generated/com/example/application/endpoint/PersonModel-mod";
